@@ -122,14 +122,25 @@ WSGI_APPLICATION = 'configuracion.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'contable',
-        'USER': 'root',                  
-        'PASSWORD': '123',           
-        'HOST': '127.0.0.1',                   
-        'PORT': '3306', 
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dbpresupuesto',
+        'USER': 'root',
+        'PASSWORD': 'ciMhM3yE0k6kURsiE2UXSrkPK3sWOkPp',
+        'HOST': 'dpg-crs7rnggph6c738qmieg-a',
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'contable',
+#         'USER': 'root',                  
+#         'PASSWORD': '123',           
+#         'HOST': '127.0.0.1',                   
+#         'PORT': '3306', 
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
