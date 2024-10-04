@@ -122,12 +122,12 @@ WSGI_APPLICATION = 'configuracion.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbpresupuesto',
-        'USER': 'root',
-        'PASSWORD': 'ciMhM3yE0k6kURsiE2UXSrkPK3sWOkPp',
-        'HOST': 'dpg-crs7rnggph6c738qmieg-a',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'contable',
+        'USER': 'root',                  
+        'PASSWORD': '123',           
+        'HOST': '127.0.0.1',                   
+        'PORT': '3306', 
     }
 }
 
@@ -175,7 +175,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

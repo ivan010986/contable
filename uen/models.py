@@ -7,9 +7,9 @@ from django.utils import timezone
 class CentroCostos(models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
-    regional = models.ForeignKey(Regional, related_name="centrocostos", on_delete=models.CASCADE)
-    uen = models.ForeignKey(UEN, related_name="centrocostos", on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, related_name="centrocostos", on_delete=models.CASCADE)
+    regional = models.ForeignKey(Regional, related_name="centrocostos", on_delete=models.CASCADE, null=True, blank=True)
+    uen = models.ForeignKey(UEN, related_name="centrocostos", on_delete=models.CASCADE, null=True, blank=True)
+    area = models.ForeignKey(Area, related_name="centrocostos", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
@@ -17,8 +17,8 @@ class CentroCostos(models.Model):
 class Rubro (models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
-    regional = models.ForeignKey(Regional, related_name="rubros", on_delete=models.CASCADE)
-    uen = models.ForeignKey(UEN, related_name="rubros", on_delete=models.CASCADE)
+    regional = models.ForeignKey(Regional, related_name="rubros", on_delete=models.CASCADE, null=True, blank=True)
+    uen = models.ForeignKey(UEN, related_name="rubros", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = "Rubro"
@@ -30,15 +30,15 @@ class Rubro (models.Model):
 class SubRubro (models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
-    rubro = models.ForeignKey(Rubro, related_name="subrubros", on_delete=models.CASCADE)
+    rubro = models.ForeignKey(Rubro, related_name="subrubros", on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return self.nombre
 
 class Presupuesto(models.Model):
-    usuario = models.ForeignKey(CustomUser, related_name="presupuesto", on_delete=models.CASCADE)
-    cuenta = models.ForeignKey(CentroCostos, related_name="presupuestos", on_delete=models.SET_NULL, null=True)
-    uen = models.ForeignKey(UEN, related_name="presupuestos", on_delete=models.SET_NULL, null=True)
+    usuario = models.ForeignKey(CustomUser, related_name="presupuesto", on_delete=models.CASCADE, null=True, blank=True)
+    cuenta = models.ForeignKey(CentroCostos, related_name="presupuestos", on_delete=models.SET_NULL, null=True, blank=True)
+    uen = models.ForeignKey(UEN, related_name="presupuestos", on_delete=models.SET_NULL, null=True, blank=True)
     rubro = models.IntegerField()
     subrubro = models.IntegerField()
     item = models.IntegerField()
