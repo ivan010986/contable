@@ -2,11 +2,11 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import Rubro, SubRubro, CentroCostos, Presupuesto
-from .serializers import RubroSerializer, SubRubroSerializer, CentroCostosSerializer, PresupuestoSerializer, PresupuestoListSerializer, HistorialPresupuestoSerializer
+from .serializers import RubroSerializer, SubRubroSerializer, CentroCostosSerializer, PresupuestoSerializer, PresupuestoListSerializer, HistorialPresupuestoSerializer, InformeDetalladoPresupuestoSerializer, PresupuestoTotalSerializer
 
 class RubroViewSet(viewsets.ModelViewSet):
     queryset = Rubro.objects.all()
@@ -143,3 +143,26 @@ class HistorialPresupuestoViewSet(viewsets.ModelViewSet):
         if user.is_authenticated:
             return Presupuesto.objects.filter(usuario=user)
         return Presupuesto.objects.none()
+    
+class InformeDetalladoPresupuestoViewSet(viewsets.ModelViewSet):
+    queryset = Presupuesto.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = InformeDetalladoPresupuestoSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return InformeDetalladoPresupuestoSerializer
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        return Presupuesto.objects.select_related('uen', 'cuenta__regional').order_by('uen__nombre', 'cuenta__regional__nombre')
+
+@api_view(['POST'])
+def save_presupuesto_total(request):
+    if request.method == 'POST':
+        serializer = PresupuestoTotalSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

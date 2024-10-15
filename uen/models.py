@@ -43,7 +43,7 @@ class Presupuesto(models.Model):
     subrubro = models.IntegerField()
     item = models.IntegerField()
     meses = models.IntegerField()
-    presupuestomes = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    presupuestomes = models.DecimalField(max_digits=10, decimal_places=0, default=0.00)
     updatedRubros = models.JSONField(null=True)
     monthlyTotals = models.JSONField(null=True)
     rubrosTotals = models.JSONField(null=True)
@@ -51,3 +51,11 @@ class Presupuesto(models.Model):
 
     def __str__(self):
         return f"Presupuesto {self.cuenta} - Meses {self.meses}"
+    
+class PresupuestoTotal(models.Model):
+    nombre = models.CharField(max_length=255)  
+    total_presupuesto = models.DecimalField(max_digits=10, decimal_places=0)  
+    fecha = models.IntegerField()  
+
+    def __str__(self):
+        return f"{self.nombre} - {self.fecha} - {self.total_presupuesto}"

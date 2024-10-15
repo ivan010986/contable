@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Rubro, SubRubro, CentroCostos, Presupuesto
+from .models import Rubro, SubRubro, CentroCostos, Presupuesto, PresupuestoTotal
 from usuario.models import CustomUser, UEN, Regional
 
 class SubRubroSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class RubroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rubro
-        fields = ['id', 'nombre', 'subrubros']
+        fields = ['id', 'codigo', 'nombre', 'subrubros']
 
 class UENSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,7 +35,7 @@ class CentroCostosSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
 class HistorialPresupuestoSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer(read_only=True)
@@ -56,3 +56,24 @@ class PresupuestoListSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         instances = [Presupuesto(**item) for item in validated_data]
         return Presupuesto.objects.bulk_create(instances)
+    
+class InformeDetalladoPresupuestoSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializer(read_only=True)
+    uen = UENSerializer(read_only=True)
+    cuenta = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Presupuesto
+        fields = ['id', 'usuario', 'uen', 'cuenta', 'rubro', 'subrubro', 'item', 'meses', 'presupuestomes', 'fecha', 'updatedRubros', 'monthlyTotals', 'rubrosTotals']
+
+    def get_cuenta(self, obj):
+        return {
+            'codigo': obj.cuenta.codigo,
+            'nombre': obj.cuenta.nombre,
+            'regional': obj.cuenta.regional.nombre
+        }
+
+class PresupuestoTotalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PresupuestoTotal
+        fields = '__all__'

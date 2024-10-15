@@ -5,9 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
-# from django.views.decorators.csrf import csrf_exempt
 
-# @csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def LoginView(request):

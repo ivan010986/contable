@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-6f%hq^e9yqf=00$th7ewqke$w%38wb49%^4%st)%u$i8@(+kq^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['backend-t9b9.onrender.com']
+ALLOWED_HOSTS = ['192.168.1.12', 'localhost', '127.0.0.1', 'ndkw636j-8000.use.devtunnels.ms']
 
 # Application definition
 INSTALLED_APPS = [
@@ -78,16 +78,16 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-    "https://front-inacar.onrender.com",
+    "https://ndkw636j-3000.use.devtunnels.ms"
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://front-inacar.onrender.com",
+    "https://ndkw636j-3000.use.devtunnels.ms"
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "https://front-inacar.onrender.com",
+    "https://ndkw636j-3000.use.devtunnels.ms"
 ]
 
 ROOT_URLCONF = 'configuracion.urls'
