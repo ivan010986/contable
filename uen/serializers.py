@@ -1,11 +1,19 @@
 from rest_framework import serializers
-from .models import Rubro, SubRubro, CentroCostos, Presupuesto, PresupuestoTotal
+from .models import Rubro, SubRubro, CentroCostos, Presupuesto, PresupuestoTotal, Auxiliar, PresupuestoActualizado, PresupuestoMes, PresupuestoProyectado
 from usuario.models import CustomUser, UEN, Regional
+from rest_framework import serializers
+
+class AuxiliarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Auxiliar
+        fields = ['id', 'codigo', 'nombre']
 
 class SubRubroSerializer(serializers.ModelSerializer):
+    auxiliares = AuxiliarSerializer(many=True, read_only=True)
+    
     class Meta:
         model = SubRubro
-        fields = ['id', 'codigo', 'nombre']
+        fields = ['id', 'codigo', 'nombre', 'auxiliares']
 
 class RubroSerializer(serializers.ModelSerializer):
     subrubros = SubRubroSerializer(many=True, read_only=True)
@@ -37,35 +45,81 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'email']
 
+# Detallado  
+class PresupuestoProyectadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PresupuestoProyectado
+        fields = ['meses', 'presupuestomes']
+             
 class HistorialPresupuestoSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer(read_only=True)
+    meses_presupuesto = PresupuestoProyectadoSerializer(many=True)
     uen = UENSerializer(read_only=True)
+    cuenta = serializers.SlugRelatedField(queryset=CentroCostos.objects.all(), slug_field='codigo')
 
     class Meta:
         model = Presupuesto
-        fields = ['id', 'usuario', 'uen', 'cuenta', 'rubro', 'subrubro', 'item', 'meses', 'presupuestomes', 'fecha', 'updatedRubros', 'monthlyTotals', 'rubrosTotals']
-
+        fields = ['id', 'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar', 'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto']
+       
 class PresupuestoSerializer(serializers.ModelSerializer):
     uen = serializers.SlugRelatedField(queryset=UEN.objects.all(), slug_field='nombre')
-    class Meta:
-        model = Presupuesto
-        fields = ['usuario', 'uen', 'cuenta', 'rubro', 'subrubro', 'item', 'meses', 'presupuestomes', 'updatedRubros', 'monthlyTotals', 'rubrosTotals']
-
-class PresupuestoListSerializer(serializers.ListSerializer):
-    child = PresupuestoSerializer()
-    def create(self, validated_data):
-        instances = [Presupuesto(**item) for item in validated_data]
-        return Presupuesto.objects.bulk_create(instances)
-    
-class InformeDetalladoPresupuestoSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer(read_only=True)
-    uen = UENSerializer(read_only=True)
+    meses_presupuesto = PresupuestoProyectadoSerializer(many=True)
+    usuario = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     cuenta = serializers.SerializerMethodField()
 
     class Meta:
         model = Presupuesto
-        fields = ['id', 'usuario', 'uen', 'cuenta', 'rubro', 'subrubro', 'item', 'meses', 'presupuestomes', 'fecha', 'updatedRubros', 'monthlyTotals', 'rubrosTotals']
+        fields = [
+            'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar',
+            'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto'
+        ]
+        
+    def get_cuenta(self, obj):
+        return {
+            'codigo': obj.cuenta.codigo,
+            'nombre': obj.cuenta.nombre,
+            'regional': obj.cuenta.regional.nombre
+        }       
+               
+# class InformeDetalladoPresupuestoSerializer(serializers.ModelSerializer):
+#     uen = serializers.SlugRelatedField(queryset=UEN.objects.all(), slug_field='nombre')
+#     meses_presupuesto = PresupuestoProyectadoSerializer(many=True)
+#     usuario = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+#     cuenta = serializers.SerializerMethodField()
 
+#     class Meta:
+#         model = PresupuestoActualizado
+#         fields = [
+#             'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar',
+#             'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto'
+#         ]
+        
+#     def get_cuenta(self, obj):
+#         return {
+#             'codigo': obj.cuenta.codigo,
+#             'nombre': obj.cuenta.nombre,
+#             'regional': obj.cuenta.regional.nombre
+#         }
+
+# Actualizado
+class PresupuestoMesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PresupuestoMes
+        fields = ['meses', 'presupuestomes']
+
+class PresupuestoActualizadoSerializer(serializers.ModelSerializer):
+    uen = serializers.SlugRelatedField(queryset=UEN.objects.all(), slug_field='nombre')
+    meses_presupuesto = PresupuestoMesSerializer(many=True)
+    usuario = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    cuenta = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PresupuestoActualizado
+        fields = [
+            'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar',
+            'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto'
+        ]
+        
     def get_cuenta(self, obj):
         return {
             'codigo': obj.cuenta.codigo,
@@ -73,6 +127,16 @@ class InformeDetalladoPresupuestoSerializer(serializers.ModelSerializer):
             'regional': obj.cuenta.regional.nombre
         }
 
+class HistorialPresupuestoActualizadoSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializer(read_only=True)
+    meses_presupuesto = PresupuestoMesSerializer(many=True)
+    uen = UENSerializer(read_only=True)
+    cuenta = serializers.SlugRelatedField(queryset=CentroCostos.objects.all(), slug_field='codigo')
+
+    class Meta:
+        model = PresupuestoActualizado
+        fields = ['id', 'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar', 'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto']
+           
 class PresupuestoTotalSerializer(serializers.ModelSerializer):
     class Meta:
         model = PresupuestoTotal
