@@ -80,7 +80,17 @@ class PresupuestoSerializer(serializers.ModelSerializer):
             'nombre': obj.cuenta.nombre,
             'regional': obj.cuenta.regional.nombre
         }       
-               
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and request.method == 'GET':
+            data.pop('monthlyTotals', None)
+            data.pop('rubrosTotals', None)
+            data.pop('item', None)
+            data.pop('usuario', None)
+        return data
+                
 # class InformeDetalladoPresupuestoSerializer(serializers.ModelSerializer):
 #     uen = serializers.SlugRelatedField(queryset=UEN.objects.all(), slug_field='nombre')
 #     meses_presupuesto = PresupuestoProyectadoSerializer(many=True)

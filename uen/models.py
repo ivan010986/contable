@@ -13,6 +13,11 @@ class CentroCostos(models.Model):
     uen = models.ForeignKey(UEN, related_name="centrocostos", on_delete=models.CASCADE, null=True, blank=True)
     area = models.ForeignKey(Area, related_name="centrocostos", on_delete=models.CASCADE, null=True, blank=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['regional']),
+        ]
+
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
     
@@ -90,6 +95,11 @@ class Presupuesto(models.Model):
     monthlyTotals = models.JSONField(null=True)
     rubrosTotals = models.JSONField(null=True)
     fecha = models.DateField(default=timezone.now)
+
+    class Meta:
+        indexes = [    
+            models.Index(fields=['uen', 'cuenta', 'fecha']),
+        ]
 
     def save(self, *args, **kwargs):
         specific_emails = ['']

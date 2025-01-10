@@ -448,7 +448,7 @@ class HistorialPresupuestoActualizadoViewSet(viewsets.ModelViewSet):
             return PresupuestoActualizado.objects.none()
 
 class LargeResultsSetPaginationes(PageNumberPagination):
-    page_size = 120  # Adjust this number based on expected load and performance
+    page_size = 3000 
     page_size_query_param = 'page_size'
     max_page_size = 35000
 
@@ -466,8 +466,12 @@ class InformeDetalladoPresupuestoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         year = self.request.query_params.get('year', 2025)
-        return Presupuesto.objects.select_related('uen', 'cuenta__regional').filter(
-        fecha__year=year).order_by('uen__nombre', 'cuenta__regional__nombre')
+        return (
+        Presupuesto.objects.select_related('uen', 'cuenta__regional')
+        .only('id', 'uen__nombre', 'cuenta__regional__nombre', 'fecha')  # Fetch only necessary fields
+        .filter(fecha__year=year)
+        .order_by('uen__nombre', 'cuenta__regional__nombre')
+    )
 
 class PresupuestoActualizadoViewSet(viewsets.ModelViewSet):
     queryset = PresupuestoActualizado.objects.all()
