@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-6f%hq^e9yqf=00$th7ewqke$w%38wb49%^4%st)%u$i8@(+kq^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.1.12', 'localhost', '127.0.0.1', '34d35wr9-8000.use.devtunnels.ms']
+ALLOWED_HOSTS = ['192.168.1.12', 'localhost', '127.0.0.1','dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io', 'g0o040g80g4gok04ws0kswgs.85.31.224.49.sslip.io']
 
 # Application definition
 INSTALLED_APPS = [
@@ -78,16 +78,16 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-    "https://34d35wr9-3000.use.devtunnels.ms",
+    "dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://34d35wr9-3000.use.devtunnels.ms",
+    "dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "https://34d35wr9-3000.use.devtunnels.ms",
+    "dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
 ]
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 83886080  # 10 MB
 ROOT_URLCONF = 'configuracion.urls'
@@ -125,8 +125,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'contablesa',
         'USER': 'root',                  
-        'PASSWORD': '123',           
-        'HOST': '127.0.0.1',                   
+        'PASSWORD': 'FkkFPEbMEyhsWWcfoUDtNtJyO3D7yxNPloEXlPhcDGbhhVsNubCaWVJKUDN2uTl3',           
+        'HOST': 'x88s4c8g4oko8k80ko000s4k',                   
         'PORT': '3306', 
     }
 }
