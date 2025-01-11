@@ -78,16 +78,16 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-    "dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
+    "http://dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
+    "http://dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
+    "http://dgk0kcsskowk40csc4k4sccs.85.31.224.49.sslip.io",
 ]
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 83886080  # 10 MB
 ROOT_URLCONF = 'configuracion.urls'
