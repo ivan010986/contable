@@ -128,8 +128,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'contablesa',
         'USER': 'root',                  
-        'PASSWORD': 'FkkFPEbMEyhsWWcfoUDtNtJyO3D7yxNPloEXlPhcDGbhhVsNubCaWVJKUDN2uTl3',           
-        'HOST': 'x88s4c8g4oko8k80ko000s4k',                   
+        'PASSWORD': 'jWp1Zq4Cmn5QY4aImyKH3zCJMvcGxfAnu6gBlbNenEEtxZxRYLxvScuBAusi0FvV',           
+        'HOST': 't400k4w4s0ko8sg4wc4cgc4g',                   
         'PORT': '3306', 
     }
 }
