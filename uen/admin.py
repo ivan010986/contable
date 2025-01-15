@@ -23,23 +23,26 @@ class PresupuestoAdmin(admin.ModelAdmin):
     search_fields = ('usuario', 'fecha')
     inlines = [PresupuestoProyectadoInline]
 
+from django.contrib import admin
+from .models import Auxiliar, SubRubro, SubRubroAlt, Rubro, MonthlyTotal, RubroTotal, PresupuestoActualizado, PresupuestoMes, Presupuesto
+
 class AuxiliarAdmin(admin.ModelAdmin):
-    list_display = ('id', 'codigo', 'nombre', 'subrubro')
-    list_editable = ('codigo', 'nombre', 'subrubro')  
-    search_fields = ('codigo', 'nombre')
+    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Auxiliar
+    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo Auxiliar
 
 class SubRubroAdmin(admin.ModelAdmin):
-    list_display = ('id', 'codigo', 'nombre', 'rubro')
-    list_editable = ('codigo', 'nombre', 'rubro')  
-    search_fields = ('codigo', 'nombre')
+    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubro
+    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo SubRubro
 
 class SubRubroAltAdmin(admin.ModelAdmin):
     list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
-    list_editable = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
+    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
+    list_display_links = ['codigo']  # Configurar list_display_links para usar list_editable
 
 class RubroAdmin(admin.ModelAdmin):
     list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
-    list_editable = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
+    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
+    list_display_links = ['codigo']  # Configurar list_display_links para usar list_editable
 
 
 admin.site.register(Auxiliar, AuxiliarAdmin)
@@ -50,4 +53,4 @@ admin.site.register(MonthlyTotal)
 admin.site.register(RubroTotal)
 admin.site.register(PresupuestoActualizado)
 admin.site.register(PresupuestoMes)
-admin.site.register(Presupuesto, PresupuestoAdmin) 
+admin.site.register(Presupuesto)
