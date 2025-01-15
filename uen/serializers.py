@@ -66,7 +66,7 @@ class AuxiliarSerializer(serializers.ModelSerializer):
         model = Auxiliar
         fields = '__all__'
 
-class SubrubroSerializer(serializers.ModelSerializer):
+class SubrubrosSerializer(serializers.ModelSerializer):
     auxiliares = AuxiliarSerializer(many=True)
 
     class Meta:

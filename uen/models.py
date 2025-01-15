@@ -8,7 +8,7 @@ class Auxiliar(models.Model):
     codigo = models.IntegerField()
     nombre = models.CharField(max_length=255)
 
-class Subrubro(models.Model):
+class Subrubros(models.Model):
     codigo = models.IntegerField()
     nombre = models.CharField(max_length=255)
     auxiliares = models.ManyToManyField(Auxiliar)
@@ -25,6 +25,7 @@ class MonthlyTotal(models.Model):
 class RubroTotal(models.Model):
     nombre = models.CharField(max_length=255)
     monthly_totals = models.ManyToManyField(MonthlyTotal)
+
 
 logger = logging.getLogger(__name__)
 # Create your models here.    
