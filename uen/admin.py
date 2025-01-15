@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CentroCostos, Rubro, Presupuesto, SubRubro, Auxiliar, PresupuestoProyectado, SubRubroAlt, MonthlyTotal, RubroTotal, PresupuestoActualizado, PresupuestoMes
+from .models import CentroCostos, Rubro, Presupuesto, SubRubro, Auxiliar, PresupuestoProyectado
 
 # Register your models here.
 class CentroCostosAdmin(admin.ModelAdmin):
@@ -22,35 +22,20 @@ class PresupuestoAdmin(admin.ModelAdmin):
     list_display = ('id', 'usuario', 'uen', 'fecha')
     search_fields = ('usuario', 'fecha')
     inlines = [PresupuestoProyectadoInline]
+admin.site.register(Presupuesto, PresupuestoAdmin)
 
-from django.contrib import admin
-from .models import Auxiliar, SubRubro, SubRubroAlt, Rubro, MonthlyTotal, RubroTotal, PresupuestoActualizado, PresupuestoMes, Presupuesto
-
-class AuxiliarAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Auxiliar
-    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo Auxiliar
+class AxiliarAdmin(admin.ModelAdmin):
+    list_display = ('id', 'codigo', 'nombre', 'subrubro')
+    list_editable = ('codigo', 'nombre', 'subrubro')  
+    search_fields = ('codigo', 'nombre')
+    
+admin.site.register(Auxiliar, AxiliarAdmin)
 
 class SubRubroAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubro
-    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo SubRubro
-
-class SubRubroAltAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
-    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
-    list_display_links = ['codigo']  # Configurar list_display_links para usar list_editable
-
-class RubroAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
-    list_editable = ['nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
-    list_display_links = ['codigo']  # Configurar list_display_links para usar list_editable
-
-
-admin.site.register(Auxiliar, AuxiliarAdmin)
+    list_display = ('id', 'codigo', 'nombre', 'rubro')
+    list_editable = ('codigo', 'nombre', 'rubro')  
+    search_fields = ('codigo', 'nombre')
+    
 admin.site.register(SubRubro, SubRubroAdmin)
-admin.site.register(SubRubroAlt, SubRubroAltAdmin)
-admin.site.register(Rubro, RubroAdmin)
-admin.site.register(MonthlyTotal)
-admin.site.register(RubroTotal)
-admin.site.register(PresupuestoActualizado)
-admin.site.register(PresupuestoMes)
-admin.site.register(Presupuesto)
+
+admin.site.register(Rubro)

@@ -20,33 +20,10 @@ class CentroCostos(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
-class Auxiliar(models.Model):
+    
+class Rubro (models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nombre
-
-class SubRubro(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    auxiliares = models.ManyToManyField(Auxiliar, related_name="subrubros")
-
-    def __str__(self):
-        return self.nombre
-
-class SubRubroAlt(models.Model):  # Renombrar este modelo para evitar conflictos
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    auxiliares = models.ManyToManyField(Auxiliar, related_name="subrubros_alt")
-
-    def __str__(self):
-        return self.nombre
-
-class Rubro(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    subrubros = models.ManyToManyField(SubRubro, related_name="rubros")
 
     class Meta:
         verbose_name = "Rubro"
@@ -54,20 +31,23 @@ class Rubro(models.Model):
 
     def __str__(self):
         return self.nombre
-
-class MonthlyTotal(models.Model):
-    month = models.IntegerField()
-    total = models.FloatField()
-
+    
+class SubRubro (models.Model):
+    codigo = models.PositiveIntegerField()
+    nombre = models.CharField(max_length=100)
+    rubro = models.ForeignKey(Rubro, related_name="subrubros", on_delete=models.CASCADE, null=True, blank=True)
+    
     def __str__(self):
-        return f"Month: {self.month}, Total: {self.total}"
+        return  f"{self.codigo} {self.nombre}"
 
-class RubroTotal(models.Model):
-    nombre = models.CharField(max_length=255)
-    monthly_totals = models.ManyToManyField(MonthlyTotal)
-
+class Auxiliar (models.Model):
+    codigo = models.PositiveIntegerField()
+    nombre = models.CharField(max_length=100)
+    subrubro = models.ForeignKey(SubRubro, related_name="auxiliares", on_delete=models.CASCADE, null=True, blank=True)
+    
     def __str__(self):
         return self.nombre
+
 
 class PresupuestoActualizado(models.Model):
     usuario = models.ForeignKey(CustomUser, related_name="presupuesto_actualizado", on_delete=models.CASCADE, null=True, blank=True)
@@ -77,8 +57,9 @@ class PresupuestoActualizado(models.Model):
     subrubro = models.IntegerField()
     auxiliar = models.IntegerField(default=0)
     item = models.IntegerField()
-    updated_rubros = models.ForeignKey(Rubro, on_delete=models.CASCADE)
-    rubros_totals = models.ForeignKey(RubroTotal, on_delete=models.CASCADE)
+    updatedRubros = models.JSONField(null=True, blank=True)
+    monthlyTotals = models.JSONField(null=True, blank=True)
+    rubrosTotals = models.JSONField(null=True, blank=True)
     fecha = models.DateField(default=timezone.now)
 
     def save(self, *args, **kwargs):
@@ -92,6 +73,7 @@ class PresupuestoActualizado(models.Model):
     def __str__(self):
         return f"Presupuesto {self.cuenta} - Fecha {self.fecha}"
 
+
 class PresupuestoMes(models.Model):
     presupuesto = models.ForeignKey(PresupuestoActualizado, related_name="meses_presupuesto", on_delete=models.CASCADE)
     meses = models.IntegerField()
@@ -99,6 +81,7 @@ class PresupuestoMes(models.Model):
 
     def __str__(self):
         return f"Presupuesto {self.presupuesto.id} - Mes {self.meses} - Monto {self.presupuestomes}"
+
 
 class Presupuesto(models.Model):
     usuario = models.ForeignKey(CustomUser, related_name="presupuesto", on_delete=models.CASCADE, null=True, blank=True)
@@ -108,14 +91,31 @@ class Presupuesto(models.Model):
     subrubro = models.IntegerField()
     auxiliar = models.IntegerField(default=0)
     item = models.IntegerField()
-    updated_rubros = models.ForeignKey(Rubro, on_delete=models.CASCADE)
-    rubros_totals = models.ForeignKey(RubroTotal, on_delete=models.CASCADE)
+    updatedRubros = models.JSONField(null=True)
+    monthlyTotals = models.JSONField(null=True)
+    rubrosTotals = models.JSONField(null=True)
     fecha = models.DateField(default=timezone.now)
 
     class Meta:
         indexes = [    
             models.Index(fields=['uen', 'cuenta', 'fecha']),
         ]
+
+    def save(self, *args, **kwargs):
+        specific_emails = ['']
+
+        if self.usuario and self.usuario.email in specific_emails:
+            self.fecha = timezone.now().date()
+            logger.info(f"Fecha guardada como actual para {self.usuario.email}")
+        else:
+            self.fecha = self.fecha.replace(year=timezone.now().year + 1)
+            logger.info(f"Fecha guardada como siguiente año para {self.usuario.email}")
+
+        super(Presupuesto, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Presupuesto {self.cuenta} - Usuario {self.usuario}"
+
 
 class PresupuestoProyectado(models.Model):
     presupuesto = models.ForeignKey(Presupuesto, related_name="meses_presupuesto", on_delete=models.CASCADE)

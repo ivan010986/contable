@@ -467,11 +467,11 @@ class InformeDetalladoPresupuestoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         year = self.request.query_params.get('year', 2025)
         return (
-            Presupuesto.objects.select_related('uen', 'cuenta__regional', 'rubros_totals')
-            .only('id', 'uen__nombre', 'cuenta__regional__nombre', 'fecha')  # Fetch only necessary fields
-            .filter(fecha__year=year)
-            .order_by('uen__nombre', 'cuenta__regional__nombre')
-        )
+        Presupuesto.objects.select_related('uen', 'cuenta__regional')
+        .only('id', 'uen__nombre', 'cuenta__regional__nombre', 'fecha')  # Fetch only necessary fields
+        .filter(fecha__year=year)
+        .order_by('uen__nombre', 'cuenta__regional__nombre')
+    )
 
 class PresupuestoActualizadoViewSet(viewsets.ModelViewSet):
     queryset = PresupuestoActualizado.objects.all()
