@@ -4,29 +4,6 @@ from usuario.models import UEN, Regional, CustomUser, Area
 from django.utils import timezone
 import logging
 
-class Auxiliar(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-
-class Subrubros(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    auxiliares = models.ManyToManyField(Auxiliar)
-
-class Rubro(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    subrubros = models.ManyToManyField(Subrubros)
-
-class MonthlyTotal(models.Model):
-    month = models.IntegerField()
-    total = models.FloatField()
-
-class RubroTotal(models.Model):
-    nombre = models.CharField(max_length=255)
-    monthly_totals = models.ManyToManyField(MonthlyTotal)
-
-
 logger = logging.getLogger(__name__)
 # Create your models here.    
 class CentroCostos(models.Model):
@@ -43,18 +20,18 @@ class CentroCostos(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
-    
-class Rubro (models.Model):
-    codigo = models.PositiveIntegerField()
-    nombre = models.CharField(max_length=100)
 
+class Rubro(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    subrubros = models.ManyToManyField('Subrubros')
     class Meta:
         verbose_name = "Rubro"
         verbose_name_plural = "Rubros"
 
     def __str__(self):
         return self.nombre
-    
+
 class SubRubro (models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
@@ -71,6 +48,44 @@ class Auxiliar (models.Model):
     def __str__(self):
         return self.nombre
 
+class Subrubros(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    auxiliares = models.ManyToManyField(Auxiliar)
+
+
+class Auxiliar (models.Model):
+    codigo = models.PositiveIntegerField()
+    nombre = models.CharField(max_length=100)
+    subrubro = models.ForeignKey(SubRubro, related_name="auxiliares", on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return self.nombre
+
+
+class Subrubros(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    auxiliares = models.ManyToManyField(Auxiliar)
+
+class Rubro(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    subrubros = models.ManyToManyField(Subrubros)
+    class Meta:
+        verbose_name = "Rubro"
+        verbose_name_plural = "Rubros"
+
+    def __str__(self):
+        return self.nombre
+    
+class MonthlyTotal(models.Model):
+    month = models.IntegerField()
+    total = models.FloatField()
+
+class RubroTotal(models.Model):
+    nombre = models.CharField(max_length=255)
+    monthly_totals = models.ManyToManyField(MonthlyTotal)
 
 class PresupuestoActualizado(models.Model):
     usuario = models.ForeignKey(CustomUser, related_name="presupuesto_actualizado", on_delete=models.CASCADE, null=True, blank=True)
@@ -80,7 +95,7 @@ class PresupuestoActualizado(models.Model):
     subrubro = models.IntegerField()
     auxiliar = models.IntegerField(default=0)
     item = models.IntegerField()
-    updatedRubros = models.JSONField(null=True, blank=True)
+    updated_rubros = models.ForeignKey(Rubro, on_delete=models.CASCADE)
     rubros_totals = models.ForeignKey(RubroTotal, on_delete=models.CASCADE)
     fecha = models.DateField(default=timezone.now)
 
@@ -113,10 +128,8 @@ class Presupuesto(models.Model):
     subrubro = models.IntegerField()
     auxiliar = models.IntegerField(default=0)
     item = models.IntegerField()
-    # updatedRubros = models.JSONField(null=True)
     updated_rubros = models.ForeignKey(Rubro, on_delete=models.CASCADE)
-    monthlyTotals = models.JSONField(null=True)
-    rubrosTotals = models.JSONField(null=True)
+    rubros_totals = models.ForeignKey(RubroTotal, on_delete=models.CASCADE)
     fecha = models.DateField(default=timezone.now)
 
     class Meta:
