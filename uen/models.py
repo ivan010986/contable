@@ -21,6 +21,9 @@ class CentroCostos(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
 
+from django.db import models
+from django.utils import timezone
+
 class Auxiliar(models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
@@ -36,7 +39,7 @@ class SubRubro(models.Model):
     def __str__(self):
         return self.nombre
 
-class Subrubro(models.Model):
+class SubRubroAlt(models.Model):  # Renombrar este modelo para evitar conflictos
     codigo = models.IntegerField()
     nombre = models.CharField(max_length=255)
     auxiliares = models.ManyToManyField(Auxiliar, related_name="subrubros_alt")
@@ -69,7 +72,7 @@ class RubroTotal(models.Model):
 
     def __str__(self):
         return self.nombre
-    
+
 class PresupuestoActualizado(models.Model):
     usuario = models.ForeignKey(CustomUser, related_name="presupuesto_actualizado", on_delete=models.CASCADE, null=True, blank=True)
     cuenta = models.ForeignKey(CentroCostos, related_name="presupuestos_actualizado", on_delete=models.SET_NULL, null=True, blank=True)
@@ -101,7 +104,6 @@ class PresupuestoMes(models.Model):
     def __str__(self):
         return f"Presupuesto {self.presupuesto.id} - Mes {self.meses} - Monto {self.presupuestomes}"
 
-
 class Presupuesto(models.Model):
     usuario = models.ForeignKey(CustomUser, related_name="presupuesto", on_delete=models.CASCADE, null=True, blank=True)
     cuenta = models.ForeignKey(CentroCostos, related_name="presupuestos", on_delete=models.SET_NULL, null=True, blank=True)
@@ -118,22 +120,6 @@ class Presupuesto(models.Model):
         indexes = [    
             models.Index(fields=['uen', 'cuenta', 'fecha']),
         ]
-
-    def save(self, *args, **kwargs):
-        specific_emails = ['']
-
-        if self.usuario and self.usuario.email in specific_emails:
-            self.fecha = timezone.now().date()
-            logger.info(f"Fecha guardada como actual para {self.usuario.email}")
-        else:
-            self.fecha = self.fecha.replace(year=timezone.now().year + 1)
-            logger.info(f"Fecha guardada como siguiente año para {self.usuario.email}")
-
-        super(Presupuesto, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Presupuesto {self.cuenta} - Usuario {self.usuario}"
-
 
 class PresupuestoProyectado(models.Model):
     presupuesto = models.ForeignKey(Presupuesto, related_name="meses_presupuesto", on_delete=models.CASCADE)
