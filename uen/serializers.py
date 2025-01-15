@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Rubro, SubRubro, CentroCostos, Presupuesto, PresupuestoTotal, Auxiliar, PresupuestoActualizado, PresupuestoMes, PresupuestoProyectado
+from .models import Rubro, SubRubro, CentroCostos, Presupuesto, PresupuestoTotal, Auxiliar, PresupuestoActualizado, PresupuestoMes, PresupuestoProyectado, MonthlyTotal, RubroTotal
 from usuario.models import CustomUser, UEN, Regional
 from rest_framework import serializers
 
@@ -60,19 +60,48 @@ class HistorialPresupuestoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Presupuesto
         fields = ['id', 'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar', 'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto']
-       
+
+class AuxiliarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Auxiliar
+        fields = '__all__'
+
+class SubrubroSerializer(serializers.ModelSerializer):
+    auxiliares = AuxiliarSerializer(many=True)
+
+    class Meta:
+        model = SubRubro
+        fields = '__all__'
+
+class RubroSerializer(serializers.ModelSerializer):
+    subrubros = SubrubroSerializer(many=True)
+
+    class Meta:
+        model = Rubro
+        fields = '__all__'
+
+class MonthlyTotalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyTotal
+        fields = '__all__'
+
+class RubroTotalSerializer(serializers.ModelSerializer):
+    monthly_totals = MonthlyTotalSerializer(many=True)
+
+    class Meta:
+        model = RubroTotal
+        fields = '__all__'
+
 class PresupuestoSerializer(serializers.ModelSerializer):
     uen = serializers.SlugRelatedField(queryset=UEN.objects.all(), slug_field='nombre')
     meses_presupuesto = PresupuestoProyectadoSerializer(many=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     cuenta = serializers.SerializerMethodField()
+    updated_rubros = RubroSerializer()
 
     class Meta:
         model = Presupuesto
-        fields = [
-            'usuario', 'cuenta', 'uen', 'rubro', 'subrubro', 'auxiliar',
-            'item', 'fecha', 'updatedRubros', 'rubrosTotals', 'monthlyTotals', 'meses_presupuesto'
-        ]
+        fields = '__all__'
         
     def get_cuenta(self, obj):
         return {

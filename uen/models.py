@@ -4,6 +4,28 @@ from usuario.models import UEN, Regional, CustomUser, Area
 from django.utils import timezone
 import logging
 
+class Auxiliar(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+
+class Subrubro(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    auxiliares = models.ManyToManyField(Auxiliar)
+
+class Rubro(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    subrubros = models.ManyToManyField(Subrubro)
+
+class MonthlyTotal(models.Model):
+    month = models.IntegerField()
+    total = models.FloatField()
+
+class RubroTotal(models.Model):
+    nombre = models.CharField(max_length=255)
+    monthly_totals = models.ManyToManyField(MonthlyTotal)
+
 logger = logging.getLogger(__name__)
 # Create your models here.    
 class CentroCostos(models.Model):
@@ -58,8 +80,7 @@ class PresupuestoActualizado(models.Model):
     auxiliar = models.IntegerField(default=0)
     item = models.IntegerField()
     updatedRubros = models.JSONField(null=True, blank=True)
-    monthlyTotals = models.JSONField(null=True, blank=True)
-    rubrosTotals = models.JSONField(null=True, blank=True)
+    rubros_totals = models.ForeignKey(RubroTotal, on_delete=models.CASCADE)
     fecha = models.DateField(default=timezone.now)
 
     def save(self, *args, **kwargs):
@@ -91,7 +112,8 @@ class Presupuesto(models.Model):
     subrubro = models.IntegerField()
     auxiliar = models.IntegerField(default=0)
     item = models.IntegerField()
-    updatedRubros = models.JSONField(null=True)
+    # updatedRubros = models.JSONField(null=True)
+    updated_rubros = models.ForeignKey(Rubro, on_delete=models.CASCADE)
     monthlyTotals = models.JSONField(null=True)
     rubrosTotals = models.JSONField(null=True)
     fecha = models.DateField(default=timezone.now)
