@@ -22,14 +22,11 @@ class PresupuestoAdmin(admin.ModelAdmin):
     list_display = ('id', 'usuario', 'uen', 'fecha')
     search_fields = ('usuario', 'fecha')
     inlines = [PresupuestoProyectadoInline]
-admin.site.register(Presupuesto, PresupuestoAdmin)
 
-class AxiliarAdmin(admin.ModelAdmin):
+class AuxiliarAdmin(admin.ModelAdmin):
     list_display = ('id', 'codigo', 'nombre', 'subrubro')
     list_editable = ('codigo', 'nombre', 'subrubro')  
     search_fields = ('codigo', 'nombre')
-    
-admin.site.register(Auxiliar, AxiliarAdmin)
 
 class SubRubroAdmin(admin.ModelAdmin):
     list_display = ('id', 'codigo', 'nombre', 'rubro')
@@ -45,6 +42,7 @@ class RubroAdmin(admin.ModelAdmin):
     list_editable = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
 
 
+admin.site.register(Auxiliar, AuxiliarAdmin)
 admin.site.register(SubRubro, SubRubroAdmin)
 admin.site.register(SubRubroAlt, SubRubroAltAdmin)
 admin.site.register(Rubro, RubroAdmin)
@@ -52,4 +50,4 @@ admin.site.register(MonthlyTotal)
 admin.site.register(RubroTotal)
 admin.site.register(PresupuestoActualizado)
 admin.site.register(PresupuestoMes)
-admin.site.register(Presupuesto)
+admin.site.register(Presupuesto, PresupuestoAdmin) 
