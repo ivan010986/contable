@@ -74,7 +74,7 @@ class SubrubrosSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RubroSerializer(serializers.ModelSerializer):
-    subrubros = SubrubroSerializer(many=True)
+    subrubros = SubrubrosSerializer(many=True)
 
     class Meta:
         model = Rubro

@@ -16,7 +16,7 @@ class Subrubros(models.Model):
 class Rubro(models.Model):
     codigo = models.IntegerField()
     nombre = models.CharField(max_length=255)
-    subrubros = models.ManyToManyField(Subrubro)
+    subrubros = models.ManyToManyField(Subrubros)
 
 class MonthlyTotal(models.Model):
     month = models.IntegerField()
