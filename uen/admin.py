@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CentroCostos, Rubro, Presupuesto, SubRubro, Auxiliar, PresupuestoProyectado
+from .models import CentroCostos, Rubro, Presupuesto, SubRubro, Auxiliar, PresupuestoProyectado, SubRubroAlt, MonthlyTotal, RubroTotal, PresupuestoActualizado, PresupuestoMes
 
 # Register your models here.
 class CentroCostosAdmin(admin.ModelAdmin):
@@ -35,7 +35,21 @@ class SubRubroAdmin(admin.ModelAdmin):
     list_display = ('id', 'codigo', 'nombre', 'rubro')
     list_editable = ('codigo', 'nombre', 'rubro')  
     search_fields = ('codigo', 'nombre')
-    
-admin.site.register(SubRubro, SubRubroAdmin)
 
-admin.site.register(Rubro)
+class SubRubroAltAdmin(admin.ModelAdmin):
+    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
+    list_editable = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo SubRubroAlt
+
+class RubroAdmin(admin.ModelAdmin):
+    list_display = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
+    list_editable = ['codigo', 'nombre']  # Asegúrate de que estos campos existen en el modelo Rubro
+
+
+admin.site.register(SubRubro, SubRubroAdmin)
+admin.site.register(SubRubroAlt, SubRubroAltAdmin)
+admin.site.register(Rubro, RubroAdmin)
+admin.site.register(MonthlyTotal)
+admin.site.register(RubroTotal)
+admin.site.register(PresupuestoActualizado)
+admin.site.register(PresupuestoMes)
+admin.site.register(Presupuesto)

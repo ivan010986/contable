@@ -20,10 +20,6 @@ class CentroCostos(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
-
-from django.db import models
-from django.utils import timezone
-
 class Auxiliar(models.Model):
     codigo = models.PositiveIntegerField()
     nombre = models.CharField(max_length=100)
