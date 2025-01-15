@@ -21,10 +21,34 @@ class CentroCostos(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.regional} - {self.uen}"
 
+class Auxiliar(models.Model):
+    codigo = models.PositiveIntegerField()
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+class SubRubro(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    auxiliares = models.ManyToManyField(Auxiliar, related_name="subrubros")
+
+    def __str__(self):
+        return self.nombre
+
+class Subrubro(models.Model):
+    codigo = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    auxiliares = models.ManyToManyField(Auxiliar, related_name="subrubros_alt")
+
+    def __str__(self):
+        return self.nombre
+
 class Rubro(models.Model):
     codigo = models.IntegerField()
     nombre = models.CharField(max_length=255)
-    subrubros = models.ManyToManyField('Subrubros')
+    subrubros = models.ManyToManyField(SubRubro, related_name="rubros")
+
     class Meta:
         verbose_name = "Rubro"
         verbose_name_plural = "Rubros"
@@ -32,61 +56,20 @@ class Rubro(models.Model):
     def __str__(self):
         return self.nombre
 
-class SubRubro (models.Model):
-    codigo = models.PositiveIntegerField()
-    nombre = models.CharField(max_length=100)
-    rubro = models.ForeignKey(Rubro, related_name="subrubros", on_delete=models.CASCADE, null=True, blank=True)
-    
-    def __str__(self):
-        return  f"{self.codigo} {self.nombre}"
-
-class Auxiliar (models.Model):
-    codigo = models.PositiveIntegerField()
-    nombre = models.CharField(max_length=100)
-    subrubro = models.ForeignKey(SubRubro, related_name="auxiliares", on_delete=models.CASCADE, null=True, blank=True)
-    
-    def __str__(self):
-        return self.nombre
-
-class Subrubros(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    auxiliares = models.ManyToManyField(Auxiliar)
-
-
-class Auxiliar (models.Model):
-    codigo = models.PositiveIntegerField()
-    nombre = models.CharField(max_length=100)
-    subrubro = models.ForeignKey(SubRubro, related_name="auxiliares", on_delete=models.CASCADE, null=True, blank=True)
-    
-    def __str__(self):
-        return self.nombre
-
-
-class Subrubros(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    auxiliares = models.ManyToManyField(Auxiliar)
-
-class Rubro(models.Model):
-    codigo = models.IntegerField()
-    nombre = models.CharField(max_length=255)
-    subrubros = models.ManyToManyField(Subrubros)
-    class Meta:
-        verbose_name = "Rubro"
-        verbose_name_plural = "Rubros"
-
-    def __str__(self):
-        return self.nombre
-    
 class MonthlyTotal(models.Model):
     month = models.IntegerField()
     total = models.FloatField()
+
+    def __str__(self):
+        return f"Month: {self.month}, Total: {self.total}"
 
 class RubroTotal(models.Model):
     nombre = models.CharField(max_length=255)
     monthly_totals = models.ManyToManyField(MonthlyTotal)
 
+    def __str__(self):
+        return self.nombre
+    
 class PresupuestoActualizado(models.Model):
     usuario = models.ForeignKey(CustomUser, related_name="presupuesto_actualizado", on_delete=models.CASCADE, null=True, blank=True)
     cuenta = models.ForeignKey(CentroCostos, related_name="presupuestos_actualizado", on_delete=models.SET_NULL, null=True, blank=True)
@@ -109,7 +92,6 @@ class PresupuestoActualizado(models.Model):
 
     def __str__(self):
         return f"Presupuesto {self.cuenta} - Fecha {self.fecha}"
-
 
 class PresupuestoMes(models.Model):
     presupuesto = models.ForeignKey(PresupuestoActualizado, related_name="meses_presupuesto", on_delete=models.CASCADE)
